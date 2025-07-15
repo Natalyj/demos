@@ -1,4 +1,4 @@
-import { IMenuItem } from './types.ts';
+import { IMenuItem } from '../model/types.ts';
 
 interface Props {
     item: IMenuItem;

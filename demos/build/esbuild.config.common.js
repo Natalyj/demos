@@ -1,5 +1,5 @@
 export const commonConfig = {
-  entryPoints: ['./src/index.tsx'],
+  entryPoints: ['./src/app/index.tsx'],
   bundle: true,
   format: 'esm',
   target: 'esnext',

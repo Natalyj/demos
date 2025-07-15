@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Menu } from '../Menu/Menu.tsx';
+import { Menu } from '#widgets';
 
 const Container = styled.div`
     display: grid;

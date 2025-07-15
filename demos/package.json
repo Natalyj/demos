@@ -13,7 +13,9 @@
     "node": "24.4.0"
   },
   "imports": {
-    "#components": "./src/components/index.ts"
+    "#pages": "./src/pages/index.ts",
+    "#widgets": "./src/widgets/index.ts",
+    "#shared": "./src/shared/index.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

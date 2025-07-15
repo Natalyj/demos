@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { MainPage } from '#components';
+import { MainPage } from '#pages';
 
 const AppContainer = styled.div`
     font-family: Montserrat, sans-serif;
