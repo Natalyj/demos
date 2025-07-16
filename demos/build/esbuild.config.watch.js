@@ -8,7 +8,7 @@ context({
     htmlPlugin({
       files: [
         {
-          entryPoints: ['./src/app/index.tsx'],
+          entryPoints: ['./src/index.tsx'],
           filename: 'index.html',
           htmlTemplate: './src/index.html',
         },

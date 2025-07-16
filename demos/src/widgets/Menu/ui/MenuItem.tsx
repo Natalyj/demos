@@ -1,20 +1,62 @@
+import styled from '@emotion/styled';
+import { useAtom } from 'jotai';
+import { useCallback, useMemo } from 'react';
+
+import { currentAlgorithm, interactive } from '#app';
+
 import { IMenuItem } from '../model/types.ts';
+
+const Item = styled.div<{
+    isInteractive?: boolean;
+    depth: number;
+    isActive: boolean;
+}>`
+    padding: 8px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    margin-left: ${({ depth }) => depth * 16}px;
+    background-color: ${({ isInteractive }) =>
+        isInteractive ? 'white' : 'transparent'};
+    ${({ isInteractive, isActive }) => isInteractive && interactive(isActive)}
+`;
 
 interface Props {
     item: IMenuItem;
+    depth?: number;
 }
 
-export const MenuItem = ({ item }: Props) => {
+export const MenuItem = ({ item, depth = 0 }: Props) => {
+    const [algorithm, setCurrentAlgorithm] = useAtom(currentAlgorithm);
+
+    const isInteractive = useMemo(
+        () => item.algorithm !== undefined,
+        [item.algorithm],
+    );
+
+    const handleClick = useCallback(() => {
+        if (item.algorithm !== undefined && item.algorithm !== algorithm) {
+            setCurrentAlgorithm(item.algorithm);
+        }
+    }, [item.algorithm, algorithm]);
+
     return (
-        <li>
-            {item.label}
+        <>
+            <Item
+                isInteractive={isInteractive}
+                depth={depth}
+                onClick={handleClick}
+                isActive={item.algorithm === algorithm}
+            >
+                {item.label}
+            </Item>
             {item.children && item.children.length > 0 && (
-                <ul>
+                <div>
                     {item.children.map((child, index) => (
-                        <MenuItem key={index} item={child} />
+                        <MenuItem key={index} item={child} depth={depth + 1} />
                     ))}
-                </ul>
+                </div>
             )}
-        </li>
+        </>
     );
 };

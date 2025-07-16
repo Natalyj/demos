@@ -6,12 +6,10 @@ const AppContainer = styled.div`
     font-family: Montserrat, sans-serif;
 `;
 
-const App = () => {
+export const App = () => {
     return (
         <AppContainer>
             <MainPage />
         </AppContainer>
     );
 };
-
-export default App;

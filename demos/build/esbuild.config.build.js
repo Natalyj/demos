@@ -9,7 +9,7 @@ build({
     htmlPlugin({
       files: [
         {
-          entryPoints: ['./src/app/index.tsx'],
+          entryPoints: ['./src/index.tsx'],
           filename: 'index.html',
           htmlTemplate: './src/html/index.html',
         },
