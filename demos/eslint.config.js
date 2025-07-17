@@ -3,6 +3,7 @@ import tsParser from '@typescript-eslint/parser';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import prettier from 'eslint-plugin-prettier';
+import importPlugin from 'eslint-plugin-import';
 
 export default {
   files: ['**/*.ts', '**/*.tsx'],
@@ -16,6 +17,7 @@ export default {
     react: reactPlugin,
     'react-hooks': reactHooks,
     prettier,
+    import: importPlugin,
   },
   rules: {
     '@typescript-eslint/no-unused-vars': 'warn',

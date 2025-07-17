@@ -1,4 +1,4 @@
-import { Algorithm } from '#shared';
+import { Algorithm } from '#entities/Algorithm';
 
 import { IMenuItem } from './types.ts';
 

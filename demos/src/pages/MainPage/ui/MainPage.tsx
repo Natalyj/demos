@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
-import { AlgorithmView, Menu } from '#widgets';
+import { AlgorithmView } from '#widgets/AlgorithmView';
+import { Menu } from '#widgets/Menu';
 
 const Container = styled.div`
     display: grid;

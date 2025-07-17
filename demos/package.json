@@ -3,7 +3,7 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "build": "rm -rf ./dist && node build/esbuild.config.build.js  && cp -r ./dist/* ../staticfiles/ && rm -rf ./dist",
+    "build": "rm -rf ./dist && node build/esbuild.config.build.js",
     "watch": "rm -rf ./dist && node build/esbuild.config.watch.js",
     "lint": "eslint",
     "lint:fix": "eslint --fix"
@@ -13,9 +13,10 @@
     "node": "24.4.0"
   },
   "imports": {
-    "#pages": "./src/pages/index.ts",
-    "#widgets": "./src/widgets/index.ts",
-    "#shared": "./src/shared/index.ts"
+    "#entities/*": "./src/entities/*/index.ts",
+    "#pages/*": "./src/pages/*/index.ts",
+    "#widgets/*": "./src/widgets/*/index.ts",
+    "#shared/*": "./src/shared/*/index.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -33,11 +34,13 @@
     "esbuild": "^0.25.6",
     "esbuild-plugin-polyfill-node": "^0.3.0",
     "eslint": "^9.30.1",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.1.0",
+    "steiger": "0.5.8",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.36.0"
   }

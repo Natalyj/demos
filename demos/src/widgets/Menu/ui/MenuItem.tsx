@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import { useAtom } from 'jotai';
 import { useCallback, useMemo } from 'react';
 
-import { currentAlgorithm, interactive } from '#app';
+import { currentAlgorithm } from '#entities/Algorithm';
+import { interactive } from '#shared/ui/interactive';
 
 import { IMenuItem } from '../model/types.ts';
 
@@ -12,9 +13,7 @@ const Item = styled.div<{
     isActive: boolean;
 }>`
     padding: 8px;
-    background: #fff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
     margin-left: ${({ depth }) => depth * 16}px;
     background-color: ${({ isInteractive }) =>
         isInteractive ? 'white' : 'transparent'};
