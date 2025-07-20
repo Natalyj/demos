@@ -6,7 +6,8 @@
     "build": "rm -rf ./dist && node build/esbuild.config.build.js",
     "watch": "rm -rf ./dist && node build/esbuild.config.watch.js",
     "lint": "eslint",
-    "lint:fix": "eslint --fix"
+    "lint:fix": "eslint --fix",
+    "fsd": "steiger ./src"
   },
   "packageManager": "yarn@4.9.2",
   "engines": {
