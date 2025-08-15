@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-// import { useAtomValue } from 'jotai';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { getContext } from '#shared/lib/canvas2d';
+import { Size } from '#shared/lib/math2d';
 import { IconPlay, IconRemove } from '#shared/ui/icons';
 import { interactive } from '#shared/ui/interactive';
-// import { currentAlgorithm } from '#entities/Algorithm';
+import { useAlgorithm } from './useAlgorithm.ts';
 
 const Container = styled.div`
     display: flex;
@@ -31,19 +32,7 @@ const IconButton = styled.button<{ isInteractive: boolean }>`
     ${({ isInteractive }) => isInteractive && interactive()}
 `;
 
-interface Point {
-    x: number;
-    y: number;
-}
-
-interface Size {
-    width: number;
-    height: number;
-}
-
 export const AlgorithmView = () => {
-    // const algorithm = useAtomValue(currentAlgorithm);
-
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rafRef = useRef<number>(null);
@@ -52,41 +41,25 @@ export const AlgorithmView = () => {
         height: 0,
         updated: false,
     });
-
-    const [points, setPoints] = useState<Point[]>([]);
     const [canvasSize, setCanvasSize] = useState<Size>({ width: 0, height: 0 });
 
-    const getContext = () => {
-        const ctx = canvasRef.current?.getContext('2d');
-        if (!ctx) {
-            throw new Error('Canvas context is null');
-        }
-        return ctx;
-    };
+    const { draw, clear, play, handleCanvasClick } = useAlgorithm(canvasRef);
 
-    const drawPoint = (point: Point) => {
-        const ctx = getContext();
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = 'blue';
-        ctx.fill();
-    };
-
-    const draw = useCallback(() => {
+    const handleDraw = useCallback(() => {
         if (sizeRef.current.updated) {
-            points.forEach(drawPoint);
+            draw();
             sizeRef.current.updated = false;
         }
-        rafRef.current = requestAnimationFrame(draw);
-    }, [points]);
+        rafRef.current = requestAnimationFrame(handleDraw);
+    }, [draw]);
 
     useEffect(() => {
         if (rafRef.current !== null) {
             cancelAnimationFrame(rafRef.current);
         }
 
-        rafRef.current = requestAnimationFrame(draw);
-    }, [draw]);
+        rafRef.current = requestAnimationFrame(handleDraw);
+    }, [handleDraw]);
 
     useEffect(() => {
         if (containerRef.current === null) {
@@ -116,24 +89,15 @@ export const AlgorithmView = () => {
         };
     }, [containerRef.current]);
 
-    const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        if (canvasRef.current === null) {
-            return;
-        }
-
-        const rect = canvasRef.current.getBoundingClientRect();
-        const point = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-        };
-        setPoints((prev) => [...prev, point]);
-        drawPoint(point);
-    };
-
-    const handleClear = () => {
-        setPoints([]);
-        getContext().clearRect(0, 0, canvasSize.width, canvasSize.height);
-    };
+    const handleClear = useCallback(() => {
+        clear();
+        getContext(canvasRef).clearRect(
+            0,
+            0,
+            canvasSize.width,
+            canvasSize.height,
+        );
+    }, [clear, canvasRef.current, canvasSize.width, canvasSize.height]);
 
     return (
         <Container ref={containerRef}>
@@ -147,7 +111,7 @@ export const AlgorithmView = () => {
                 <IconButton isInteractive onClick={handleClear}>
                     <IconRemove />
                 </IconButton>
-                <IconButton isInteractive>
+                <IconButton isInteractive onClick={play}>
                     <IconPlay />
                 </IconButton>
             </ControlPanel>
