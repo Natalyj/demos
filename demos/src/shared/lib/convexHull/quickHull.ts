@@ -1,4 +1,6 @@
+import { emitEvent } from '../emitter/index.ts';
 import { cross, Point, triangleArea2 } from '../math2d/index.ts';
+import { FIND_POINT_EVENT } from './FindPointEvent.ts';
 import { uniquePoints } from './uniquePoints.ts';
 
 export const quickHull = (points: Point[]): Point[] => {
@@ -40,6 +42,8 @@ export const quickHull = (points: Point[]): Point[] => {
 
     hull.push(minPoint, maxPoint);
 
+    emitEvent(FIND_POINT_EVENT, [minPoint, maxPoint]);
+
     return uniquePoints(hull);
 };
 
@@ -80,6 +84,8 @@ const findHull = (points: Point[], a: Point, b: Point, hull: Point[]) => {
             subsetB.push(point);
         }
     }
+
+    emitEvent(FIND_POINT_EVENT, [farthestPoint]);
 
     findHull(subsetA, a, farthestPoint, hull);
     findHull(subsetB, farthestPoint, b, hull);

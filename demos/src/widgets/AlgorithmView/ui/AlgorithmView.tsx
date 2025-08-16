@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { getContext } from '#shared/lib/canvas2d';
 import { Size } from '#shared/lib/math2d';
 import { IconPlay, IconRemove } from '#shared/ui/icons';
 import { interactive } from '#shared/ui/interactive';
@@ -89,16 +88,6 @@ export const AlgorithmView = () => {
         };
     }, [containerRef.current]);
 
-    const handleClear = useCallback(() => {
-        clear();
-        getContext(canvasRef).clearRect(
-            0,
-            0,
-            canvasSize.width,
-            canvasSize.height,
-        );
-    }, [clear, canvasRef.current, canvasSize.width, canvasSize.height]);
-
     return (
         <Container ref={containerRef}>
             <Canvas
@@ -108,7 +97,7 @@ export const AlgorithmView = () => {
                 height={canvasSize.height}
             />
             <ControlPanel>
-                <IconButton isInteractive onClick={handleClear}>
+                <IconButton isInteractive onClick={clear}>
                     <IconRemove />
                 </IconButton>
                 <IconButton isInteractive onClick={play}>
