@@ -2,6 +2,7 @@ import { emitEvent } from '#shared/lib/emitter';
 import { cross, Point } from '#shared/lib/math2d';
 
 import { FIND_POINT_EVENT, REMOVE_POINT_EVENT } from './events.ts';
+import { findMinMax } from './findMinMax.ts';
 import { sortHull } from './sortHull.ts';
 
 export const grahamHull = (points: Point[]): Point[] => {
@@ -11,9 +12,7 @@ export const grahamHull = (points: Point[]): Point[] => {
 
     const hull: Point[] = [];
 
-    const minPoint = points.reduce((min, point) =>
-        point.y < min.y || (point.y === min.y && point.x < min.x) ? point : min,
-    );
+    const { minPoint } = findMinMax(points, 'y');
     emitEvent(FIND_POINT_EVENT, [minPoint]);
 
     const sorted = sortHull(points, minPoint);

@@ -2,6 +2,7 @@ import { emitEvent } from '#shared/lib/emitter';
 import { cross, Point, triangleArea2 } from '#shared/lib/math2d';
 
 import { FIND_POINT_EVENT } from './events.ts';
+import { findMinMax } from './findMinMax.ts';
 import { sortHull } from './sortHull.ts';
 import { uniquePoints } from './uniquePoints.ts';
 
@@ -10,17 +11,7 @@ export const quickHull = (points: Point[]): Point[] => {
         return sortHull(points);
     }
 
-    let minPoint = points[0];
-    let maxPoint = points[0];
-
-    for (const p of points) {
-        if (p.x < minPoint.x) {
-            minPoint = p;
-        }
-        if (p.x > maxPoint.x) {
-            maxPoint = p;
-        }
-    }
+    const { minPoint, maxPoint } = findMinMax(points);
 
     const leftSet = [];
     const rightSet = [];

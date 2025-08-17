@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai';
 import { RefObject } from 'react';
 
 import { Algorithm, currentAlgorithm } from '#entities/Algorithm';
-import { grahamHull, quickHull, useHull } from '#entities/Hull';
+import { grahamHull, jarvisHull, quickHull, useHull } from '#entities/Hull';
 
 const chooseHullAlgorithm = (algorithm: Algorithm) => {
     switch (algorithm) {
@@ -10,6 +10,8 @@ const chooseHullAlgorithm = (algorithm: Algorithm) => {
             return quickHull;
         case Algorithm.GrahamScan:
             return grahamHull;
+        case Algorithm.JarvisMarch:
+            return jarvisHull;
         default:
             throw new Error(`Unsupported algorithm: ${algorithm}`);
     }
@@ -23,6 +25,7 @@ export const useAlgorithm = (
     switch (algorithm) {
         case Algorithm.QuickHull:
         case Algorithm.GrahamScan:
+        case Algorithm.JarvisMarch:
             return useHull(canvasRef, chooseHullAlgorithm(algorithm));
         default:
             throw new Error(`Unsupported algorithm: ${algorithm}`);
