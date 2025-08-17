@@ -1,15 +1,18 @@
-import { selectEmitter } from './selectEmitter.ts';
+import { EmitterManager } from './EmitterManager.ts';
 
 export const addEventListener = (
     eventName: string,
     listener: (event: any) => void,
 ) => {
-    selectEmitter(eventName).addEventListener(eventName, listener);
+    EmitterManager.getEmitter(eventName).addEventListener(eventName, listener);
 };
 
 export const removeEventListener = (
     eventName: string,
     listener: (event: any) => void,
 ) => {
-    selectEmitter(eventName).removeEventListener(eventName, listener);
+    EmitterManager.getEmitter(eventName).removeEventListener(
+        eventName,
+        listener,
+    );
 };
