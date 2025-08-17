@@ -1,11 +1,13 @@
-import { emitEvent } from '../emitter/index.ts';
-import { cross, Point, triangleArea2 } from '../math2d/index.ts';
-import { FIND_POINT_EVENT } from './FindPointEvent.ts';
+import { emitEvent } from '#shared/lib/emitter';
+import { cross, Point, triangleArea2 } from '#shared/lib/math2d';
+
+import { FIND_POINT_EVENT } from './events.ts';
+import { sortHull } from './sortHull.ts';
 import { uniquePoints } from './uniquePoints.ts';
 
 export const quickHull = (points: Point[]): Point[] => {
     if (points.length < 3) {
-        return points;
+        return sortHull(points);
     }
 
     let minPoint = points[0];
@@ -44,7 +46,7 @@ export const quickHull = (points: Point[]): Point[] => {
 
     emitEvent(FIND_POINT_EVENT, [minPoint, maxPoint]);
 
-    return uniquePoints(hull);
+    return sortHull(uniquePoints(hull));
 };
 
 const findHull = (points: Point[], a: Point, b: Point, hull: Point[]) => {

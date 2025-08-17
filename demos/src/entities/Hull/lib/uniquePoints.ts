@@ -1,4 +1,4 @@
-import { Point } from '../math2d/types.ts';
+import { Point } from '#shared/lib/math2d';
 
 export const uniquePoints = (points: Point[]): Point[] => {
     const seen = new Set<string>();

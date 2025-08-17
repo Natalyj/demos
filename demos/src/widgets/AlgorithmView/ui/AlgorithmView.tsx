@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Size } from '#shared/lib/math2d';
 import { IconPlay, IconRemove } from '#shared/ui/icons';
 import { interactive } from '#shared/ui/interactive';
+
 import { useAlgorithm } from './useAlgorithm.ts';
 
 const Container = styled.div`

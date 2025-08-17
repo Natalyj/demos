@@ -1,6 +1,6 @@
-import { Point } from '../math2d/types.ts';
+import { Point } from '#shared/lib/math2d';
 
-export const sortHull = (hull: Point[]): Point[] => {
+export const sortHull = (hull: Point[], anchor?: Point): Point[] => {
     let sumX = 0;
     let sumY = 0;
     for (const point of hull) {
@@ -8,8 +8,8 @@ export const sortHull = (hull: Point[]): Point[] => {
         sumY += point.y;
     }
 
-    const centerX = sumX / hull.length;
-    const centerY = sumY / hull.length;
+    const centerX = anchor?.x ?? sumX / hull.length;
+    const centerY = anchor?.y ?? sumY / hull.length;
 
     return hull
         .slice()

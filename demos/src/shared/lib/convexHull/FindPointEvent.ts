@@ -1,1 +1,0 @@
-export const FIND_POINT_EVENT = 'FIND_POINT_EVENT';
