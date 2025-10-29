@@ -43,7 +43,8 @@ export const AlgorithmView = () => {
     });
     const [canvasSize, setCanvasSize] = useState<Size>({ width: 0, height: 0 });
 
-    const { draw, clear, play, handleCanvasClick } = useAlgorithm(canvasRef);
+    const { draw, clear, play, handleCanvasClick, overlay } =
+        useAlgorithm(canvasRef);
 
     const handleDraw = useCallback(() => {
         if (sizeRef.current.updated) {
@@ -105,6 +106,7 @@ export const AlgorithmView = () => {
                     <IconPlay />
                 </IconButton>
             </ControlPanel>
+            {overlay}
         </Container>
     );
 };

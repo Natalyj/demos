@@ -1,4 +1,12 @@
-import { MouseEvent, RefObject, useCallback, useEffect, useState } from 'react';
+import styled from '@emotion/styled';
+import {
+    MouseEvent,
+    RefObject,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 
 import { getContext } from '#shared/lib/canvas2d';
 import { drawHullLines, drawPoint } from '#shared/lib/draw2d';
@@ -6,6 +14,17 @@ import { addEventListener, removeEventListener } from '#shared/lib/emitter';
 import { Point } from '#shared/lib/math2d';
 
 import { FIND_POINT_EVENT, REMOVE_POINT_EVENT } from '../lib/events.ts';
+
+const OverlayContainer = styled.div`
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    background: #f5f5f5;
+    padding: 16px;
+    user-select: none;
+`;
 
 interface Step {
     points: Point[];
@@ -19,6 +38,15 @@ export const useHull = (
     const [points, setPoints] = useState<Point[]>([]);
     const [hull, setHull] = useState<Point[]>([]);
     const [steps, setSteps] = useState<Step[]>([]);
+
+    const overlay = useMemo(
+        () => (
+            <OverlayContainer>
+                Put points by clicking on the canvas and click "Play"
+            </OverlayContainer>
+        ),
+        [],
+    );
 
     const draw = useCallback(() => {
         const ctx = getContext(canvasRef);
@@ -126,5 +154,6 @@ export const useHull = (
         clear,
         play,
         handleCanvasClick,
+        overlay,
     };
 };
