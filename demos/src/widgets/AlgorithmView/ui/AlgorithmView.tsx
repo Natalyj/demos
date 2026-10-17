@@ -1,11 +1,14 @@
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useAtomValue } from 'jotai';
 
-import { Size } from '#shared/lib/math2d';
+import type { Size } from '#shared/lib/math2d';
+import { type AlgorithmActions, currentAlgorithm, isHullAlgorithm, isSplineAlgorithm } from '#shared/lib/algorithm';
 import { IconPlay, IconRemove } from '#shared/ui/icons';
 import { interactive } from '#shared/ui/interactive';
 
-import { useAlgorithm } from './useAlgorithm.ts';
+import { HullView } from '#entities/Hull';
+import { SplineView } from '#entities/Spline';
 
 const Container = styled.div`
     display: flex;
@@ -33,6 +36,8 @@ const IconButton = styled.button<{ isInteractive: boolean }>`
 `;
 
 export const AlgorithmView = () => {
+    const algorithm = useAtomValue(currentAlgorithm);
+    
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rafRef = useRef<number>(null);
@@ -42,17 +47,15 @@ export const AlgorithmView = () => {
         updated: false,
     });
     const [canvasSize, setCanvasSize] = useState<Size>({ width: 0, height: 0 });
-
-    const { draw, clear, play, handleCanvasClick, overlay } =
-        useAlgorithm(canvasRef);
+    const [actions, setActions] = useState<AlgorithmActions | null>(null);
 
     const handleDraw = useCallback(() => {
-        if (sizeRef.current.updated) {
-            draw();
+        if (sizeRef.current.updated && actions?.draw !== undefined) {
+            actions.draw();
             sizeRef.current.updated = false;
         }
         rafRef.current = requestAnimationFrame(handleDraw);
-    }, [draw]);
+    }, [actions?.draw]);
 
     useEffect(() => {
         if (rafRef.current !== null) {
@@ -94,19 +97,36 @@ export const AlgorithmView = () => {
         <Container ref={containerRef}>
             <Canvas
                 ref={canvasRef}
-                onClick={handleCanvasClick}
+                onClick={actions?.handleCanvasClick}
                 width={canvasSize.width}
                 height={canvasSize.height}
             />
+
+            {isHullAlgorithm(algorithm) && (
+                <HullView
+                    algorithm={algorithm}
+                    canvasRef={canvasRef}
+                    onActionsChange={setActions}
+                />
+            )}
+
+            {isSplineAlgorithm(algorithm) && (
+                <SplineView
+                    algorithm={algorithm}
+                    canvasRef={canvasRef}
+                    onActionsChange={setActions}
+                />
+            )}
+
             <ControlPanel>
-                <IconButton isInteractive onClick={clear}>
+                <IconButton isInteractive onClick={actions?.clear} disabled={actions?.clear === undefined}>
                     <IconRemove />
                 </IconButton>
-                <IconButton isInteractive onClick={play}>
+                <IconButton isInteractive onClick={actions?.play} disabled={actions?.play === undefined}>
                     <IconPlay />
                 </IconButton>
             </ControlPanel>
-            {overlay}
+            {actions?.overlay}
         </Container>
     );
 };

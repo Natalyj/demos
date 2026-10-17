@@ -1,12 +1,5 @@
 import styled from '@emotion/styled';
-import {
-    MouseEvent,
-    RefObject,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getContext } from '#shared/lib/canvas2d';
 import { drawHullLines, drawPoint } from '#shared/lib/draw2d';
@@ -14,6 +7,7 @@ import { addEventListener, removeEventListener } from '#shared/lib/emitter';
 import { Point } from '#shared/lib/math2d';
 
 import { FIND_POINT_EVENT, REMOVE_POINT_EVENT } from '../lib/events.ts';
+import type { HullViewProps, Step } from '../model/types.ts';
 
 const OverlayContainer = styled.div`
     position: absolute;
@@ -26,15 +20,7 @@ const OverlayContainer = styled.div`
     user-select: none;
 `;
 
-interface Step {
-    points: Point[];
-    eventName: string;
-}
-
-export const useHull = (
-    canvasRef: RefObject<HTMLCanvasElement | null>,
-    fn: (points: Point[]) => Point[],
-) => {
+export const useHull = ({ canvasRef, fn }: HullViewProps) => {
     const [points, setPoints] = useState<Point[]>([]);
     const [hull, setHull] = useState<Point[]>([]);
     const [steps, setSteps] = useState<Step[]>([]);
@@ -149,11 +135,14 @@ export const useHull = (
         animate();
     }, [hull]);
 
-    return {
-        draw,
-        clear,
-        play,
-        handleCanvasClick,
-        overlay,
-    };
+    return useMemo(
+        () => ({
+            draw,
+            clear,
+            play,
+            handleCanvasClick,
+            overlay,
+        }),
+        [draw, clear, play, handleCanvasClick, overlay],
+    );
 };

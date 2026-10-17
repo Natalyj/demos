@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useAtom } from 'jotai';
 import { useCallback, useMemo } from 'react';
 
-import { currentAlgorithm } from '#entities/Algorithm';
+import { currentAlgorithm } from '#shared/lib/algorithm';
 import { interactive } from '#shared/ui/interactive';
 
 import { IMenuItem } from '../model/types.ts';
