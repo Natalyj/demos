@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getContext } from '#shared/lib/canvas2d';
+import { getCanvas, getContext2d } from '#shared/lib/canvas';
 import { drawHullLines, drawPoint } from '#shared/lib/draw2d';
 import { addEventListener, removeEventListener } from '#shared/lib/emitter';
 import { Point } from '#shared/lib/math2d';
@@ -35,7 +35,8 @@ export const useHull = ({ canvasRef, fn }: HullViewProps) => {
     );
 
     const draw = useCallback(() => {
-        const ctx = getContext(canvasRef);
+        const canvas = getCanvas(canvasRef);
+        const ctx = getContext2d(canvas);
 
         points.forEach((point) => {
             const color = hull.includes(point) ? 'red' : undefined;
@@ -51,7 +52,8 @@ export const useHull = ({ canvasRef, fn }: HullViewProps) => {
                 return;
             }
 
-            const ctx = getContext(canvasRef);
+            const canvas = getCanvas(canvasRef);
+            const ctx = getContext2d(canvas);
             const rect = canvasRef.current.getBoundingClientRect();
             const point = {
                 x: e.clientX - rect.left,
@@ -67,8 +69,10 @@ export const useHull = ({ canvasRef, fn }: HullViewProps) => {
         if (canvasRef.current === null) {
             return;
         }
+
         const { width, height } = canvasRef.current;
-        const ctx = getContext(canvasRef);
+        const canvas = getCanvas(canvasRef);
+        const ctx = getContext2d(canvas);
         ctx.clearRect(0, 0, width, height);
     }, [canvasRef.current]);
 
@@ -81,7 +85,8 @@ export const useHull = ({ canvasRef, fn }: HullViewProps) => {
 
     const prepareToPlay = useCallback(() => {
         clearCanvas();
-        const ctx = getContext(canvasRef);
+        const canvas = getCanvas(canvasRef);
+        const ctx = getContext2d(canvas);
         points.forEach((point) => {
             drawPoint(ctx, point);
         });
@@ -111,7 +116,8 @@ export const useHull = ({ canvasRef, fn }: HullViewProps) => {
     }, []);
 
     const animate = useCallback(() => {
-        const ctx = getContext(canvasRef);
+        const canvas = getCanvas(canvasRef);
+        const ctx = getContext2d(canvas);
 
         const stepByStep = async () => {
             for (let i = 0; i < steps.length; i++) {

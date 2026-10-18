@@ -1,20 +1,11 @@
 import styled from '@emotion/styled';
-import {
-    MouseEvent,
-    RefObject,
-    useCallback,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { getContext } from '#shared/lib/canvas2d';
-import { drawHullLines, drawPoint } from '#shared/lib/draw2d';
-import { Point } from '#shared/lib/math2d';
+import { getCanvas } from '#shared/lib/canvas';
+import { CanvasResources, setUpCanvas } from '#shared/lib/webgpu';
+import { renderClearPass } from '#shared/lib/webgpu/renderPass';
 
 import { SplineViewProps } from '../model/types.ts';
-
-// TODONAT copy of hull, implement
 
 const OverlayContainer = styled.div`
     position: absolute;
@@ -27,15 +18,8 @@ const OverlayContainer = styled.div`
     user-select: none;
 `;
 
-interface Step {
-    points: Point[];
-    eventName: string;
-}
-
 export const useSpline = ({ canvasRef, fn }: SplineViewProps) => {
-    const [points, setPoints] = useState<Point[]>([]);
-    const [hull, setHull] = useState<Point[]>([]);
-    const [steps, setSteps] = useState<Step[]>([]);
+    const canvasResources = useRef<CanvasResources | null>(null);
 
     const overlay = useMemo(
         () => (
@@ -47,84 +31,92 @@ export const useSpline = ({ canvasRef, fn }: SplineViewProps) => {
     );
 
     const draw = useCallback(() => {
-        const ctx = getContext(canvasRef);
+        const resources = canvasResources.current;
 
-        points.forEach((point) => {
-            const color = hull.includes(point) ? 'red' : undefined;
-            drawPoint(ctx, point, { color });
-        });
+        if (resources === null) {
+            console.error('Resources are not set before draw.');
+            return;
+        }
 
-        drawHullLines(ctx, hull);
-    }, [points, hull, canvasRef.current]);
+        const canvas = getCanvas(canvasRef);
+
+        if (canvas.width === 0 || canvas.height === 0) {
+            console.warn('Canvas has zero size.');
+            return;
+        }
+
+        renderClearPass(
+            resources.device,
+            resources.context,
+            [0.5, 0.5, 0, 1],
+        );
+    }, [canvasRef]);
 
     const handleCanvasClick = useCallback(
         (e: MouseEvent<HTMLCanvasElement>) => {
-            if (canvasRef.current === null) {
-                return;
-            }
-
-            const ctx = getContext(canvasRef);
-            const rect = canvasRef.current.getBoundingClientRect();
-            const point = {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top,
-            };
-            setPoints((prev) => [...prev, point]);
-            drawPoint(ctx, point);
+            // TODONAT implement
         },
         [canvasRef.current],
     );
 
     const clearCanvas = useCallback(() => {
-        if (canvasRef.current === null) {
-            return;
-        }
-        const { width, height } = canvasRef.current;
-        const ctx = getContext(canvasRef);
-        ctx.clearRect(0, 0, width, height);
+        // TODONAT implement
     }, [canvasRef.current]);
 
     const clear = useCallback(() => {
         clearCanvas();
-        setPoints([]);
-        setHull([]);
-        setSteps([]);
+        // TODONAT implement
     }, [clearCanvas]);
 
     const prepareToPlay = useCallback(() => {
-        clearCanvas();
-        const ctx = getContext(canvasRef);
-        points.forEach((point) => {
-            drawPoint(ctx, point);
-        });
-        setSteps([]);
-    }, [canvasRef.current, points, clearCanvas]);
+        // TODONAT implement
+    }, [canvasRef.current]);
 
     const play = useCallback(() => {
         prepareToPlay();
-        setHull(fn(points));
-    }, [points, prepareToPlay, fn]);
+        // TODONAT implement
+    }, [prepareToPlay]);
 
-    const animate = useCallback(() => {
-        const ctx = getContext(canvasRef);
+    const clearResources = useCallback(() => {
+        const resources = canvasResources.current;
 
-        const stepByStep = async () => {
-            for (let i = 0; i < steps.length; i++) {
-                const step = steps[i];
-                step.points.forEach((point) => {
-                    drawPoint(ctx, point);
-                });
-                await new Promise((resolve) => setTimeout(resolve, 500));
-            }
+        canvasResources.current = null;
 
-            drawHullLines(ctx, hull);
-        };
-        stepByStep();
-    }, [canvasRef.current, steps]);
+        if (resources === null) {
+            return;
+        }
+
+        resources.context.unconfigure();
+        resources.device.destroy();
+    }, []);
 
     useEffect(() => {
-        animate();
-    }, [hull]);
+        const canvas = getCanvas(canvasRef);
+        let cancelled = false;
+
+        setUpCanvas(canvas)
+            .then((resources) => {
+                if (cancelled) {
+                    resources.context.unconfigure();
+                    resources.device.destroy();
+                    return;
+                }
+
+                canvasResources.current = resources;
+                // TODONAT test draw
+                draw();
+            })
+            .catch((err) => {
+                if (!cancelled) {
+                    console.error(`WebGPU setup failed: ${err}`);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+            clearResources();
+        };
+    }, [canvasRef, clearResources, draw]);
 
     return useMemo(
         () => ({

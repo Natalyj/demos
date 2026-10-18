@@ -28,11 +28,7 @@ interface Props extends AlgorithmViewProps {
     algorithm: HullAlgorithm;
 }
 
-export const HullView = ({
-    algorithm,
-    canvasRef,
-    onActionsChange,
-}: Props) => {
+export const HullView = ({ algorithm, canvasRef, onActionsChange }: Props) => {
     const actions = useHull({ canvasRef, fn: chooseHullAlgorithm(algorithm) });
 
     useEffect(() => {

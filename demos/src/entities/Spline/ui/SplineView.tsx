@@ -13,6 +13,7 @@ import { useSpline } from './useSpline.tsx';
 const chooseSplineAlgorithm = (algorithm: SplineAlgorithm) => {
     switch (algorithm) {
         case Algorithm.SplineCentripetal:
+            return () => console.error('Implement me');
         default:
             throw new Error(`Unsupported algorithm: ${algorithm}`);
     }
@@ -27,7 +28,10 @@ export const SplineView = ({
     canvasRef,
     onActionsChange,
 }: Props) => {
-    const actions = useSpline({ canvasRef, fn: chooseSplineAlgorithm(algorithm) });
+    const actions = useSpline({
+        canvasRef,
+        fn: chooseSplineAlgorithm(algorithm),
+    });
 
     useEffect(() => {
         onActionsChange(actions);

@@ -11,25 +11,29 @@ export const interactive = (isActive = false) => css`
         opacity: 0.5;
     }
 
-    ${!isActive &&
-    css`
-        &:hover:not(:disabled) {
-            opacity: 0.8;
-            background: rgba(0, 0, 0, 0.1);
-        }
+    ${
+        !isActive &&
+        css`
+            &:hover:not(:disabled) {
+                opacity: 0.8;
+                background: rgba(0, 0, 0, 0.1);
+            }
 
-        &:active:not(:disabled) {
+            &:active:not(:disabled) {
+                opacity: 0.9;
+                background: rgba(0, 0, 0, 0.2);
+            }
+        `
+    }
+
+    ${
+        isActive &&
+        css`
             opacity: 0.9;
             background: rgba(0, 0, 0, 0.2);
-        }
-    `}
-
-    ${isActive &&
-    css`
-        opacity: 0.9;
-        background: rgba(0, 0, 0, 0.2);
-        cursor: default;
-    `}
+            cursor: default;
+        `
+    }
 
     @media (prefers-reduced-motion: no-preference) {
         transition:

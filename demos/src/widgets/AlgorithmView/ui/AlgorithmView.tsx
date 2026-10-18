@@ -1,9 +1,15 @@
 import styled from '@emotion/styled';
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import {
+    type AlgorithmActions,
+    currentAlgorithm,
+    getAlgorithmKey,
+    isHullAlgorithm,
+    isSplineAlgorithm,
+} from '#shared/lib/algorithm';
 import type { Size } from '#shared/lib/math2d';
-import { type AlgorithmActions, currentAlgorithm, isHullAlgorithm, isSplineAlgorithm } from '#shared/lib/algorithm';
 import { IconPlay, IconRemove } from '#shared/ui/icons';
 import { interactive } from '#shared/ui/interactive';
 
@@ -37,7 +43,7 @@ const IconButton = styled.button<{ isInteractive: boolean }>`
 
 export const AlgorithmView = () => {
     const algorithm = useAtomValue(currentAlgorithm);
-    
+
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const rafRef = useRef<number>(null);
@@ -93,9 +99,12 @@ export const AlgorithmView = () => {
         };
     }, [containerRef.current]);
 
+    const algorithmKey = useMemo(() => getAlgorithmKey(algorithm), [algorithm]);
+
     return (
         <Container ref={containerRef}>
             <Canvas
+                key={algorithmKey}
                 ref={canvasRef}
                 onClick={actions?.handleCanvasClick}
                 width={canvasSize.width}
@@ -119,10 +128,18 @@ export const AlgorithmView = () => {
             )}
 
             <ControlPanel>
-                <IconButton isInteractive onClick={actions?.clear} disabled={actions?.clear === undefined}>
+                <IconButton
+                    isInteractive
+                    onClick={actions?.clear}
+                    disabled={actions?.clear === undefined}
+                >
                     <IconRemove />
                 </IconButton>
-                <IconButton isInteractive onClick={actions?.play} disabled={actions?.play === undefined}>
+                <IconButton
+                    isInteractive
+                    onClick={actions?.play}
+                    disabled={actions?.play === undefined}
+                >
                     <IconPlay />
                 </IconButton>
             </ControlPanel>

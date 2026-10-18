@@ -1,4 +1,4 @@
-import { Algorithm } from '#entities/Algorithm';
+import { Algorithm } from '#shared/lib/algorithm';
 
 export interface IMenuItem {
     label: string;
